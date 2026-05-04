@@ -1,5 +1,16 @@
-const form = document.getElementById("formAgendamento");
+const form = document.getElementById("form");
 const lista = document.getElementById("lista");
+
+async function carregarAgendamentos() {
+  const res = await fetch("http://localhost:3000/agendamentos");
+  const dados = await res.json();
+
+  lista.innerHTML = "";
+
+  dados.forEach(item => {
+    adicionarNaTela(item);
+  });
+}
 
 form.addEventListener("submit", async (e) => {
   e.preventDefault();
@@ -7,7 +18,7 @@ form.addEventListener("submit", async (e) => {
   const nome = document.getElementById("nome").value;
   const data = document.getElementById("data").value;
 
-  const resposta = await fetch("http://localhost:3000/agendamentos", {
+  const res = await fetch("http://localhost:3000/agendamentos", {
     method: "POST",
     headers: {
       "Content-Type": "application/json"
@@ -15,13 +26,27 @@ form.addEventListener("submit", async (e) => {
     body: JSON.stringify({ nome, data })
   });
 
-  const novo = await resposta.json();
+  const novo = await res.json();
+  adicionarNaTela(novo);
 
-  adicionarNaLista(novo);
+  form.reset();
 });
 
-function adicionarNaLista(agendamento) {
+function adicionarNaTela(item) {
   const li = document.createElement("li");
-  li.textContent = `${agendamento.nome} - ${agendamento.data}`;
+  li.innerHTML = `
+    ${item.nome} - ${new Date(item.data).toLocaleString()}
+    <button onclick="deletar(${item.id})">❌</button>
+  `;
   lista.appendChild(li);
 }
+
+async function deletar(id) {
+  await fetch(`http://localhost:3000/agendamentos/${id}`, {
+    method: "DELETE"
+  });
+
+  carregarAgendamentos();
+}
+
+carregarAgendamentos();
