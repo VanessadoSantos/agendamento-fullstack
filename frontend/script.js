@@ -80,6 +80,11 @@ form.addEventListener("submit", async (e) => {
   form.reset();
 });
 
+if (dados.length === 0) {
+  lista.innerHTML = "<p>Nenhum agendamento ainda 😴</p>";
+  return;
+}
+
 function addItem(item) {
   const li = document.createElement("li");
 
@@ -104,3 +109,13 @@ if (pegarToken()) {
   mostrarApp();
   carregar();
 }
+
+if (data.token) {
+  salvarToken(data.token);
+  mostrarApp();
+  carregar();
+} else {
+  alert("❌ Email ou senha inválidos");
+}
+
+alert("✅ Conta criada com sucesso!");
