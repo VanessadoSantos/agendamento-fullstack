@@ -1,8 +1,7 @@
 body {
-  font-family: Arial, sans-serif;
-  background: linear-gradient(135deg, #667eea, #764ba2);
+  font-family: Arial;
+  background: #667eea;
   margin: 0;
-  padding: 0;
 }
 
 .container {
@@ -11,46 +10,28 @@ body {
   background: white;
   padding: 30px;
   border-radius: 10px;
-  box-shadow: 0 10px 25px rgba(0,0,0,0.2);
 }
 
-h1 {
-  text-align: center;
-}
-
-form {
-  display: flex;
-  flex-direction: column;
-}
-
-input {
+input, button {
+  display: block;
+  width: 100%;
+  margin: 10px 0;
   padding: 10px;
-  margin-bottom: 10px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
 }
 
 button {
-  padding: 10px;
-  border: none;
-  background: #667eea;
+  background: #5a67d8;
   color: white;
+  border: none;
   cursor: pointer;
-  border-radius: 5px;
 }
 
 button:hover {
-  background: #5a67d8;
-}
-
-ul {
-  list-style: none;
-  padding: 0;
+  background: #434190;
 }
 
 li {
-  background: #f1f1f1;
-  margin: 5px 0;
+  background: #eee;
   padding: 10px;
-  border-radius: 5px;
+  margin: 5px 0;
 }

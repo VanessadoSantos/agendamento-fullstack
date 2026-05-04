@@ -1,15 +1,67 @@
+const API = "http://localhost:3000";
+
 const form = document.getElementById("form");
 const lista = document.getElementById("lista");
 
-async function carregarAgendamentos() {
-  const res = await fetch("http://localhost:3000/agendamentos");
+function salvarToken(token) {
+  localStorage.setItem("token", token);
+}
+
+function pegarToken() {
+  return localStorage.getItem("token");
+}
+
+function logout() {
+  localStorage.removeItem("token");
+  location.reload();
+}
+
+function mostrarApp() {
+  document.getElementById("loginBox").style.display = "none";
+  document.getElementById("app").style.display = "block";
+}
+
+async function register() {
+  const email = document.getElementById("email").value;
+  const senha = document.getElementById("senha").value;
+
+  await fetch(API + "/auth/register", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ email, senha })
+  });
+
+  alert("Usuário criado!");
+}
+
+async function login() {
+  const email = document.getElementById("email").value;
+  const senha = document.getElementById("senha").value;
+
+  const res = await fetch(API + "/auth/login", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ email, senha })
+  });
+
+  const data = await res.json();
+
+  if (data.token) {
+    salvarToken(data.token);
+    mostrarApp();
+    carregar();
+  } else {
+    alert("Erro no login");
+  }
+}
+
+async function carregar() {
+  const res = await fetch(API + "/agendamentos");
   const dados = await res.json();
 
   lista.innerHTML = "";
 
-  dados.forEach(item => {
-    adicionarNaTela(item);
-  });
+  dados.forEach(addItem);
 }
 
 form.addEventListener("submit", async (e) => {
@@ -18,35 +70,37 @@ form.addEventListener("submit", async (e) => {
   const nome = document.getElementById("nome").value;
   const data = document.getElementById("data").value;
 
-  const res = await fetch("http://localhost:3000/agendamentos", {
+  await fetch(API + "/agendamentos", {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json"
-    },
+    headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ nome, data })
   });
 
-  const novo = await res.json();
-  adicionarNaTela(novo);
-
+  carregar();
   form.reset();
 });
 
-function adicionarNaTela(item) {
+function addItem(item) {
   const li = document.createElement("li");
+
   li.innerHTML = `
     ${item.nome} - ${new Date(item.data).toLocaleString()}
     <button onclick="deletar(${item.id})">❌</button>
   `;
+
   lista.appendChild(li);
 }
 
 async function deletar(id) {
-  await fetch(`http://localhost:3000/agendamentos/${id}`, {
+  await fetch(API + "/agendamentos/" + id, {
     method: "DELETE"
   });
 
-  carregarAgendamentos();
+  carregar();
 }
 
-carregarAgendamentos();
+// auto login
+if (pegarToken()) {
+  mostrarApp();
+  carregar();
+}
